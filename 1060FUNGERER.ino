@@ -3,6 +3,7 @@ int Minus = 5;
 int Reset = 2;
 int Bekreft = 4;
 int RepRegistering = A0;
+// setter opp pins til knapper og sensor
 
 int buttonState = 0;
 
@@ -21,7 +22,7 @@ int currentMillis = 0;
 int lastButtonDebounceTime = 0;
 int previous = 0;
 bool bypass = false;
-
+// booleans for å sjekke input og tilstander for bruker valg
 
 int currentTime = 0;
 
