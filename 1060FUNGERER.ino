@@ -1,11 +1,10 @@
-int Pluss = 3; // grønn er pluss
+int Pluss = 3; 
 int Minus = 5;
 int Reset = 2;
 int Bekreft = 4;
 int RepRegistering = A0;
-// setter opp pins til knapper og sensor
+//Setter opp pins til knapper og sensor
 
-int buttonState = 0;
 
 int treningsaakt[3] = {0, 0, 0}; // sett, repetisjon, pause
 bool isStarted = true;
@@ -14,6 +13,8 @@ bool erRepRegistert = false;
 bool erPauseRegistert = false;
 bool erAltRegistert = false;
 bool erDetPause = false;
+//setter opp booleans som brukes til å sjekke om bruker-inputt er registrert
+
 int pin;
 int antallRepGjort = 0;
 int midlertidigRep = 0;
@@ -21,8 +22,7 @@ int naaPause = 0;
 int currentMillis = 0;
 int lastButtonDebounceTime = 0;
 int previous = 0;
-bool bypass = false;
-// booleans for å sjekke input og tilstander for bruker valg
+//setter opp variabler som blir brukt under selve treningsøkten
 
 int currentTime = 0;
 
@@ -54,17 +54,21 @@ const byte neoPin = 13;
 const byte neoPixels = 24;
 byte neoBright = 100;
 
+//Koden over er hentet fra Adafruits Neopixl-bibliotek
 
 #include <LiquidCrystal.h>
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
 int ledPin = 13;
 
+//Koden over setter opp LCD-skjermen
+
 
 unsigned long interval2 = 200;
 unsigned long tidels = 0;
 unsigned long secs = 0;
 unsigned long mins = 0;
+
 
 #include <CurieBLE.h>
 BLEDevice slave;
@@ -84,9 +88,9 @@ void setup() {
   lcd.begin(16, 2);
   lcd.setCursor(1, 0);
   Serial.begin(9600);
-  // put your setup code here, to run once:
   pixels.begin(); // This initializes the NeoPixel library.
   pixels.clear();
+  //Setter opp alle pins som skal brukes til input eller output
 
   BLE.begin(); // starte  bluetooth modul i intel curie chip
   BLE.scan(); // starte å skanne etter engheter
@@ -96,18 +100,20 @@ void setup() {
 }
 
 void loop() {
-  //pauseLys();
 
-  // put your main code here, to run repeatedly:
+  //I loopen går man igjennom og sjekker hele tiden om Resett blir trykket på
+  //Ellers så går man igjennom menyen og tar imot input
+  //Når all input er registrert begynner man med treningsøkten
   resetKnapp();
   if (erAltRegistert) {
     feedbackTreningMsensor();
-    //feedbackTrening();
     resetKnapp();
   } else {
     resetKnapp();
     registrering();
   }
+
+  
 }
 
 // kode for registrering av trenings opplegg
@@ -117,6 +123,8 @@ void registrering() {
     pixels.setPixelColor(i, pixels.Color(0, 0 , 0));
     pixels.show();
   }
+
+  //Her går man igjen omg registrerer input om antall sett, repitsjoner og pause
   while (!erSettRegistert) {
     resetKnapp();
     erKnappTrykketBekreftSett();
@@ -227,30 +235,7 @@ void erKnappTrykketRegistering(int pin) {
 
 
 
-// brukes ikke men beholdes for  testing
-void feedbackTrening() {
-  midlertidigRep = treningsaakt[1];
-  if (treningsaakt[0] != 0) {
-    if (treningsaakt[1] != 0) {
-      treningsLys();
-      lcd.clear();
-      while (antallRepGjort != treningsaakt[1]) {
-        resetKnapp();
-        updateCell(0, 0, "Rep igjen: " + (String)midlertidigRep);
-        //lcd.print("Rep igjen : " + String(midlertidigRep));
-        erKnappTrykketRegistering(RepRegistering);
-      }
-      feedbackPause();
-    }
-  } else {
-    Serial.println("Ferdig");
-    resetKnapp();
-    skruAv();
-  }
 
-}
-
-// feedback med sensor som kontaktpunkt
 void feedbackTreningMsensor() {
   midlertidigRep = treningsaakt[1];
   if (treningsaakt[0] != 0) {
@@ -279,7 +264,6 @@ void feedbackTreningMsensor() {
 
 }
 
-// boolsk evaluator for om sensor sin verdi er oppdatert eller ikke
 boolean sensorValueUpdated() {
 
   //antallRepGjort = antallRepGjort + 1;
@@ -293,8 +277,10 @@ boolean sensorValueUpdated() {
 
 
 
-// teller ned pause for bruker
+
 void feedbackPause() {
+  //Denne funksjonen brukes til å telle ned pausen og gi brukeren feedback via skjerm og en ring som lyser/blinker grønt
+
   int interval2 = 1000;
   antallRepGjort = 0;
   if (treningsaakt[0] > 0) {
@@ -329,6 +315,7 @@ void feedbackPause() {
 
 
 void pauseLys() {
+  //Lyser grønt
   for (int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(0, 2, 0)); // GRØNN.
     pixels.show();
@@ -336,6 +323,7 @@ void pauseLys() {
 }
 
 void treningsLys() {
+  //Lyser blått
   for (int i = 0; i < NUMPIXELS; i++) {
     pixels.setPixelColor(i, pixels.Color(0, 0 , 2));
     pixels.show();
@@ -344,8 +332,11 @@ void treningsLys() {
 
 
 
-// Signalisering for  bruker
+
 void lysBlink(int farge1, int farge2, int farge3) {
+  //Blinker den fargen som man sender med som parameter
+  //Mye kode hentet fra Adafruits Neopixel-bibliotek
+  
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval2) {
     previousMillis = currentMillis;
@@ -373,6 +364,9 @@ void lysBlink(int farge1, int farge2, int farge3) {
 
 
 void skruAv() {
+  //Funksjon som brukes når treningsøkt er ferdig. Skjermen sier "Du er ferdig" i 5 sekunder
+  //Samtidig så resetter den alle variablene til start og når de 5 sekundene er ferdig så kan man registrere en ny treningsøkt
+  
   int interval3 = 5000;
   int previousTing = millis();
   if (isStarted) {
@@ -398,19 +392,17 @@ void skruAv() {
 }
 
 
-void regnbue() {
-
-  //lag regnbue m/ringen
-}
-
-// brukes ikke, vil skape flimring pga konstant oppdatering 
 void updateDisplay() {
+  //Oppdaterer displayet til LCD-skjermen
+  
   lcd.clear();
 }
 
 
-// resetting av terminal
+
 void resetKnapp() {
+  //Resetter alle variabler, slik de var i starten
+  
   if (digitalRead(Reset)) {
     Serial.println("resett");
     lcd.clear();
@@ -427,7 +419,6 @@ void resetKnapp() {
     naaPause = 0;
   }
 }
-
 
 // oppdater lcd visning
 void updateCell(int pos, int rad, String content) {
