@@ -1,5 +1,5 @@
 # Askeladden-prosjekt
-![askeladdenlogo](/crashable/Askeladden-prosjekt/blob/master/35114774_10212209980953914_8968653838814806016_n.png)
+![ask](/Askeladden-prosjekt/blob/master/35114774_10212209980953914_8968653838814806016_n.png)
 
 
 IN1060 Askeladden prosjekt: deltakere: Mzia Popova, Charlotte Ødegården, Alina Zielinska og Lasse Sletbak
