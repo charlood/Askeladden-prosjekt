@@ -501,7 +501,7 @@ void slaveSubscribe() {
   //boolean subbed = true;
 }
 
-av abbonner på characeristic for å ikke oppdage verdi endring i pauser
+//av abbonner på characeristic for å ikke oppdage verdi endring i pauser
 void slaveUnsubscribe() {
   sensorCharacteristic.unsubscribe();
   //boolean subbed = false;
